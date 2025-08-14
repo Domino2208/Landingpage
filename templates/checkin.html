@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-in {% if status == 'eingecheckt' %}erfolgreich{% else %}Status{% endif %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(0deg, rgba(162, 111, 82, 1) 7%, rgba(42, 75, 99, 1) 61%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .header {
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-image: url('/static/bilder/kontakt_hintergrund.jpg');
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .header img {
+            height: 50px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .low-nav {
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .low-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .low-nav a:hover {
+            background: #34495e;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100vh;
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            padding-top: 100px;
+            transition: left 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            left: 0;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            padding: 15px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(52, 73, 94, 0.7);
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: slideIn 0.6s ease-out;
+            margin-top: 140px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-icon {
+            width: 80px;
+            height: 80px;
+            {% if status == 'eingecheckt' %}
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            {% else %}
+            background: linear-gradient(135deg, #ff9800, #ffc107);
+            {% endif %}
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .status-icon::after {
+            {% if status == 'eingecheckt' %}
+            content: "✓";
+            {% else %}
+            content: "ℹ";
+            {% endif %}
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+
+        .welcome-message {
+            color: #555;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .status-message {
+            color: #666;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .info-box {
+            {% if status == 'eingecheckt' %}
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+            {% else %}
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            {% endif %}
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            text-align: left;
+        }
+
+        .gast-details {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .detail-value {
+            color: #333;
+            word-break: break-word;
+        }
+
+        .timestamp {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 15px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .low-nav {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .header-container {
+                padding: 15px 20px;
+            }
+
+            .header img {
+                height: 35px;
+            }
+
+            .container {
+                padding: 30px 25px;
+                margin: 10px;
+                margin-top: 120px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .status-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .status-icon::after {
+                font-size: 30px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 20px;
+                margin-top: 110px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            .welcome-message {
+                font-size: 1.1em;
+            }
+
+            .status-message {
+                font-size: 1em;
+            }
+
+            .gast-details {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-container">
+            <img class="subtitle" src="/static/bilder/sts-logo.png" alt="sts-logo">
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <nav class="low-nav">
+            <a href="https://www.sts-finanzen.de">HOME</a>
+            <a href="https://www.sts-finanzen.de/ueber-uns">ÜBER UNS</a>
+            <a href="https://www.sts-finanzen.de/events">EVENTS</a>
+            <a href="https://www.sts-finanzen.de/versicherung">VERSICHERUNG</a>
+            <a href="https://www.sts-finanzen.de/immobilien">IMMOBILIEN</a>
+            <a href="https://www.sts-finanzen.de/geldanlage">GELDANLAGE</a>
+            <a href="https://www.sts-finanzen.de/finanzierung">FINANZIERUNG</a>
+        </nav>
+        <div class="mobile-menu">
+            <a href="https://www.sts-finanzen.de">HOME</a>
+            <a href="https://www.sts-finanzen.de/ueber-uns">ÜBER UNS</a>
+            <a href="https://www.sts-finanzen.de/events">EVENTS</a>
+            <a href="https://www.sts-finanzen.de/versicherung">VERSICHERUNG</a>
+            <a href="https://www.sts-finanzen.de/immobilien">IMMOBILIEN</a>
+            <a href="https://www.sts-finanzen.de/geldanlage">GELDANLAGE</a>
+            <a href="https://www.sts-finanzen.de/finanzierung">FINANZIERUNG</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="status-icon"></div>
+
+        {% if status == 'eingecheckt' %}
+        <h1>Check-in erfolgreich!</h1>
+        <p class="welcome-message">Willkommen {{ gast.vorname }}!</p>
+        <p class="status-message">
+            Sie wurden erfolgreich eingecheckt. Viel Spaß bei unserem Event!
+        </p>
+        {% else %}
+        <h1>Bereits eingecheckt</h1>
+        <p class="welcome-message">Hallo {{ gast.vorname }}!</p>
+        <p class="status-message">
+            Sie sind bereits für das Event eingecheckt. Ihre Anwesenheit wurde bereits registriert.
+        </p>
+        {% endif %}
+
+        <div class="gast-details">
+            <div class="detail-row">
+                <span class="detail-label">Vorname:</span>
+                <span class="detail-value">{{ gast.vorname }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Nachname:</span>
+                <span class="detail-value">{{ gast.nachname }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">E-Mail:</span>
+                <span class="detail-value">{{ gast.email }}</span>
+            </div>
+            {% if gast.telefon %}
+            <div class="detail-row">
+                <span class="detail-label">Telefon:</span>
+                <span class="detail-value">{{ gast.telefon }}</span>
+            </div>
+            {% endif %}
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value" style="color: #4caf50; font-weight: bold;">
+                    {% if gast.anwesend %}Anwesend{% else %}Nicht anwesend{% endif %}
+                </span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Registriert:</span>
+                <span class="detail-value">{{ gast.get_formatted_registriert_am()|berlin_time if gast.get_formatted_registriert_am() else gast.registriert_am|berlin_time }}</span>
+            </div>
+            {% if gast.get_formatted_anwesenheit_geaendert_am() %}
+            <div class="detail-row">
+                <span class="detail-label">Eingecheckt:</span>
+                <span class="detail-value">{{ gast.get_formatted_anwesenheit_geaendert_am()|berlin_time }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="info-box">
+            {% if status == 'eingecheckt' %}
+            <strong>🎉 Herzlich willkommen!</strong><br>
+            Ihr Check-in wurde erfolgreich verarbeitet. Sie können nun am Event teilnehmen.
+            {% else %}
+            <strong>ℹ️ Information</strong><br>
+            Sie haben sich bereits am {{ gast.get_formatted_anwesenheit_geaendert_am()|berlin_time }} eingecheckt.
+            {% endif %}
+        </div>
+
+        <div class="timestamp">
+            QR-Code gescannt am: {{ timestamp }}
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.hamburger').classList.remove('active');
+                document.querySelector('.mobile-menu').classList.remove('active');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            
+            if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Aktuelles Datum/Zeit anzeigen
+        document.addEventListener('DOMContentLoaded', function () {
+            const now = new Date();
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Europe/Berlin'
+            };
+            const timestamp = now.toLocaleDateString('de-DE', options).replace(',', ' um');
+            const timestampElement = document.querySelector('.timestamp');
+            if (timestampElement) {
+                timestampElement.innerHTML = `QR-Code gescannt am: ${timestamp}`;
+            }
+        });
+    </script>
+</body>
+
+</html>

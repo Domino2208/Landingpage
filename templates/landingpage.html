@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halloween Anmeldung - STS Schumacher Finanzen & Consulting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: linear-gradient(rgba(44, 62, 80, 0.8), rgba(52, 73, 94, 0.8)),
+                url('https://www.regiomanager.de/wp-content/uploads/1995/08/schumacher-online-opener-2048x1280.jpg');
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-image: url('/static/bilder/kontakt_hintergrund.jpg');
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .mid-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .mid-nav img {
+            height: 60px;
+            width: auto;
+        }
+
+        /* Hamburger Menu - Fixed */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1001;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+            display: block;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .low-nav {
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            transition: all 0.3s ease;
+        }
+
+        .low-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .low-nav a:hover {
+            background: #34495e;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100vh;
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            padding-top: 100px;
+            transition: left 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            left: 0;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            padding: 15px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(52, 73, 94, 0.7);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+        }
+
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 40px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .willkommen-box {
+            padding: 20px 0;
+        }
+
+        .willkommen-box h2 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .willkommen-box p {
+            line-height: 1.8;
+            color: #555;
+            font-size: 1.1em;
+        }
+
+        .event-image {
+            text-align: center;
+        }
+
+        .event-image img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Foto Slider */
+        .foto-slider-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .foto-slider {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+
+        .slider-track {
+            display: flex;
+            transition: transform 0.3s ease;
+        }
+
+        .slide {
+            min-width: 100%;
+            position: relative;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+            z-index: 10;
+        }
+
+        .slider-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .slider-nav.prev {
+            left: 20px;
+        }
+
+        .slider-nav.next {
+            right: 20px;
+        }
+
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .dot.active {
+            background: #3498db;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+
+        /* Share Button */
+        .share-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .share-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .share-button::before {
+            content: "🔗";
+            font-size: 16px;
+        }
+
+        .info-text {
+            background: #e8f4fd;
+            color: #1976d2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            border-left: 4px solid #1976d2;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .kinder-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .kinder-section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .kinder-section h3::before {
+            content: "👶";
+            font-size: 1.2em;
+        }
+
+        .kind-gruppe {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .kind-gruppe h4 {
+            color: #34495e;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .checkbox-group a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d32f2f;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #d32f2f;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #d32f2f;
+        }
+
+        .top-footer {
+            width: 100vw;
+            top: 0;
+            left: 0;
+            background: #34495e;
+            color: white;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin: 50px auto 0;
+        }
+
+        .top-footer h3 {
+            margin-bottom: 15px;
+        }
+
+        .top-footer p {
+            line-height: 1.6;
+        }
+
+        .top-footer a {
+            color: #3498db;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .top-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .low-footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .right-footer {
+            display: flex;
+            gap: 20px;
+        }
+
+        .right-footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .right-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .low-nav {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .mid-nav {
+                padding: 15px 20px;
+            }
+
+            .mid-nav img {
+                height: 35px;
+
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .hero-section {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 25px 20px;
+                gap: 25px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .willkommen-box h2 {
+                font-size: 2em;
+            }
+
+            .willkommen-box p {
+                font-size: 1em;
+                line-height: 1.6;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+                margin: 15px;
+                border-radius: 10px;
+            }
+
+            .form-container h2 {
+                font-size: 1.8em;
+            }
+
+            .share-button {
+                position: static;
+                margin-bottom: 20px;
+                align-self: flex-end;
+            }
+
+            .kinder-section {
+                padding: 20px 15px;
+            }
+
+            .kind-gruppe {
+                padding: 15px;
+            }
+
+            .top-footer {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                margin-top: 30px;
+            }
+
+            .low-footer {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .right-footer {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="number"],
+            textarea {
+                padding: 12px 15px;
+                font-size: 16px;
+            }
+
+            .slider-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .slider-nav.prev {
+                left: 10px;
+            }
+
+            .slider-nav.next {
+                right: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px 10px;
+            }
+
+            .hero-section {
+                padding: 20px 15px;
+                margin-bottom: 25px;
+            }
+
+            .form-container {
+                padding: 20px 15px;
+                margin: 10px;
+            }
+
+            .willkommen-box h2 {
+                font-size: 1.7em;
+            }
+
+            .form-container h2 {
+                font-size: 1.6em;
+                margin-bottom: 25px;
+            }
+
+            .kinder-section {
+                padding: 15px 10px;
+            }
+
+            .kind-gruppe {
+                padding: 12px;
+            }
+
+            .submit-btn {
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            .foto-slider-container {
+                padding: 20px;
+                margin: 15px 0;
+            }
+
+            .slide img {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <header>
+            <nav class="mid-nav">
+                <img src="/static/bilder/sts-logo.png" alt="STS Schumacher Finanzen & Consulting Logo">
+                <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+            <nav class="low-nav">
+                <a href="https://www.sts-finanzen.de">HOME</a>
+                <a href="https://www.sts-finanzen.de/ueber-uns">ÜBER UNS</a>
+                <a href="https://www.sts-finanzen.de/news">EVENTS</a>
+                <a href="https://www.sts-finanzen.de/versicherung">VERSICHERUNG</a>
+                <a href="https://www.sts-finanzen.de/immobilien">IMMOBILIEN</a>
+                <a href="https://www.sts-finanzen.de/geldanlage">GELDANLAGE</a>
+                <a href="https://www.sts-finanzen.de/finanzierung">FINANZIERUNG</a>
+            </nav>
+            <div class="mobile-menu">
+                <a href="https://www.sts-finanzen.de">HOME</a>
+                <a href="https://www.sts-finanzen.de/ueber-uns">ÜBER UNS</a>
+                <a href="https://www.sts-finanzen.de/news">EVENTS</a>
+                <a href="https://www.sts-finanzen.de/versicherung">VERSICHERUNG</a>
+                <a href="https://www.sts-finanzen.de/immobilien">IMMOBILIEN</a>
+                <a href="https://www.sts-finanzen.de/geldanlage">GELDANLAGE</a>
+                <a href="https://www.sts-finanzen.de/finanzierung">FINANZIERUNG</a>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="hero-section">
+                <div class="willkommen-box">
+                    <h2>Herzlich Willkommen!</h2>
+                    <p>
+                        <strong>Oktober 2025 │ Halloween Night – Wir laden herzlich ein!</strong><br><br>
+                        Am 31. Oktober 2025 verwandelt sich STS Schumacher Finanzen & Consulting in eine schaurig-schöne
+                        Location für eine unvergessliche Halloween-Nacht – und Sie sind mit Freunden oder Partner
+                        herzlich eingeladen, dabei zu sein.<br><br>
+                        Freuen Sie sich auf einen stimmungsvollen Abend in unserer Villa und im dekorierten
+                        Kanzleigarten Am Grafenbusch 3, 46047 Oberhausen:<br><br>
+                        Mit dabei sind mystische Live-Musik, ein Kostümwettbewerb, eine
+                        schaurige Cocktailbar und einige unheimliche Überraschungen. Für
+                        das leibliche Wohl sorgen herzhafte Snacks und stimmungsvolle Drinks, die
+                        perfekt zum Abend passen.<br><br>
+                        Beginn ist um 19 Uhr, und wir feiern bis tief in die Nacht.<br><br>
+                        <strong>Ihr Team von STS Schumacher Finanzen & Consulting</strong>
+                    </p>
+                </div>
+                <div class="event-image">
+                    <img src="/static/bilder/Einladung_Halloween_2024_Allgemein.png" alt="Halloween Event Einladung">
+                </div>
+            </div>
+
+            <!-- Foto Slider -->
+            <div class="foto-slider-container">
+                <div class="foto-slider">
+                    <div class="slider-track" id="sliderTrack">
+                        <div class="slide">
+                            <img src="https://placehold.co/900x400/e74c3c/ffffff?text=Event+Foto+1" alt="Event Foto 1">
+                        </div>
+                        <div class="slide">
+                            <img src="https://placehold.co/900x400/3498db/ffffff?text=Event+Foto+2" alt="Event Foto 2">
+                        </div>
+                        <div class="slide">
+                            <img src="https://placehold.co/900x400/27ae60/ffffff?text=Event+Foto+3" alt="Event Foto 3">
+                        </div>
+                    </div>
+                    <button class="slider-nav prev" onclick="changeSlide(-1)" aria-label="Vorheriges Bild">❮</button>
+                    <button class="slider-nav next" onclick="changeSlide(1)" aria-label="Nächstes Bild">❯</button>
+                </div>
+                <div class="slider-dots">
+                    <span class="dot active" onclick="currentSlide(1)"></span>
+                    <span class="dot" onclick="currentSlide(2)"></span>
+                    <span class="dot" onclick="currentSlide(3)"></span>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <button class="share-button" onclick="shareEvent()" aria-label="Event teilen">Teilen</button>
+                <h2>Sie sind eingeladen!</h2>
+
+                <div class="info-text">
+                    Nach Ihrer Anmeldung erhalten Sie einen QR-Code per E-Mail, mit dem Sie sich beim Event einchecken
+                    können.
+                </div>
+
+                <form method="POST" action="/register" id="registrationForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="vorname">Vorname <span class="required">*</span></label>
+                            <input type="text" id="vorname" name="vorname" required placeholder="Ihr Vorname">
+                        </div>
+                        <div class="form-group">
+                            <label for="nachname">Nachname <span class="required">*</span></label>
+                            <input type="text" id="nachname" name="nachname" required placeholder="Ihr Nachname">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-Mail-Adresse <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="ihre.email@beispiel.de">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="telefon">Telefonnummer <span class="required">*</span></label>
+                            <input type="tel" id="telefon" name="telefon" required placeholder="+49 123 456789">
+                        </div>
+                        <div class="form-group">
+                            <label for="kinder">Anzahl Kinder <span class="required">*</span></label>
+                            <input type="number" id="kinder" name="kinder" placeholder="Anzahl der Kinder">
+                        </div>
+                    </div>
+
+                    <div id="kinderContainer" class="kinder-section" style="display: none;">
+                        <h3>Angaben zu den Kindern</h3>
+                        <div id="kinderFelder"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="adresse">Adresse <span class="required">*</span></label>
+                            <input type="text" id="adresse" name="adresse" required placeholder="Straße">
+                        </div>
+                        <div class="form-group">
+                            <label for="hausnr">Hausnummer <span class="required">*</span></label>
+                            <input type="text" id="hausnr" name="hausnr" required placeholder="Nr.">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="plz">PLZ<span class="required">*</span></label>
+                            <input type="text" id="plz" name="plz" required placeholder="PLZ">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ort">Ort<span class="required">*</span></label>
+                            <input type="text" id="ort" name="ort" required placeholder="Ort">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nachricht">Nachricht (optional)</label>
+                        <textarea id="nachricht" name="nachricht"
+                            placeholder="Besondere Wünsche oder Anmerkungen..."></textarea>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="zustimmung" name="zustimmung" required>
+                        <label for="zustimmung">
+                            Ich bestätige die <a href="https://www.stsfinanzen.de/datenschutz"
+                                target="_blank">Datenschutzerklärung</a>
+                            und stimme der Verarbeitung meiner Daten für die Event-Organisation zu. <span
+                                class="required">*</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        Jetzt anmelden
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="top-footer">
+            <div>
+                <h3>Über uns</h3>
+                <p>STS Schumacher Finanzen & Consulting ist Ihr Gesprächspartner in allen Finanzfragen – von
+                    Geldanlage über Altersvorsorge bis zu Versicherungen.
+                    Gemeinsam besprechen wir Ihre Vorstellungen und
+                    zeigen, welche Möglichkeiten Sie haben.</p>
+            </div>
+
+            <div>
+                <h3>Unsere Sozialen Medien</h3>
+                <a href="https://www.facebook.com/stsfinanzen" target="_blank">Facebook</a>
+                <a href="https://www.instagram.com/sts_schumacher_finanzen" target="_blank">Instagram</a>
+                <a href="https://www.youtube.com/@SchumacherFinanzenConsulting" target="_blank">Youtube</a>
+                <a href="https://www.tiktok.com/@stsfinanzenconsulting" target="_blank">TikTok</a>
+            </div>
+
+            <div>
+                <h3>Kontakt</h3>
+                <p>
+                    Tel: <a href="tel:+4920882845900">+49 208 82 84 59 00</a>
+                    Fax: <br> +49 208 82 84 59 50 <br> 
+                    Mail: <a href="mailto:backoffice@sts-finanzen.de">info@stsfinanzen.de</a>
+                </p>
+            </div>
+
+            <div>
+                <h3>Anschrift</h3>
+                <p>Schumacher Finanzen  <br> und Consulting GmbH</p> <br>
+                <p>Am Grafenbusch 3<br>
+                    46047 Oberhausen<br><br>
+                    <a href="https://www.sts-finanzen.de" target="_blank">www.stsfinanzen.de</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="low-footer">
+            <p>&copy; Copyright STS Schumacher Finanzen & Consulting GmbH 2025</p>
+            <div class="right-footer">
+                <a href="https://www.sts-finanzen.de/impressum">Impressum</a>
+                <a href="https://www.sts-finanzen.de/datenschutz">Datenschutz</a>
+                <a href="https://www.sts-finanzen.de/cookie-einstellungen">Cookie-Einstellungen</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.hamburger').classList.remove('active');
+                document.querySelector('.mobile-menu').classList.remove('active');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Image Slider Functions
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(index) {
+            const track = document.getElementById('sliderTrack');
+            const dots = document.querySelectorAll('.dot');
+
+            if (index >= totalSlides) currentSlideIndex = 0;
+            else if (index < 0) currentSlideIndex = totalSlides - 1;
+            else currentSlideIndex = index;
+
+            track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlideIndex);
+            });
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlideIndex + direction);
+        }
+
+        function currentSlide(index) {
+            showSlide(index - 1);
+        }
+
+        // Auto-slide every 5 seconds
+        setInterval(() => {
+            changeSlide(1);
+        }, 5000);
+
+        // Share Function
+        function shareEvent() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Halloween Event - STS Schumacher Finanzen & Consulting',
+                    text: 'Kommen Sie zu unserer Halloween-Nacht am 31. Oktober 2025!',
+                    url: window.location.href
+                }).catch(err => console.log('Error sharing:', err));
+            } else {
+                // Fallback für Desktop
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        alert('Link wurde in die Zwischenablage kopiert!');
+                    }).catch(() => {
+                        fallbackCopy();
+                    });
+                } else {
+                    fallbackCopy();
+                }
+            }
+        }
+
+        function fallbackCopy() {
+            const textArea = document.createElement('textarea');
+            textArea.value = window.location.href;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Link wurde in die Zwischenablage kopiert!');
+        }
+
+        // Kinder-Felder dynamisch generieren
+        document.getElementById('kinder').addEventListener('input', function () {
+            const anzahlKinder = parseInt(this.value) || 0;
+            const container = document.getElementById('kinderContainer');
+            const kinderFelder = document.getElementById('kinderFelder');
+
+            if (anzahlKinder > 0) {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+                kinderFelder.innerHTML = '';
+                return;
+            }
+
+            kinderFelder.innerHTML = '';
+
+            for (let i = 1; i <= anzahlKinder && i <= 10; i++) {
+                const kindDiv = document.createElement('div');
+                kindDiv.className = 'kind-gruppe';
+                kindDiv.innerHTML = `
+                    <h4>Kind ${i}</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="kind${i}_vorname">Vorname <span class="required">*</span></label>
+                            <input type="text" id="kind${i}_vorname" name="kind${i}_vorname" required placeholder="Vorname Kind ${i}">
+                        </div>
+                        <div class="form-group">
+                            <label for="kind${i}_nachname">Nachname <span class="required">*</span></label>
+                            <input type="text" id="kind${i}_nachname" name="kind${i}_nachname" required placeholder="Nachname Kind ${i}">
+                        </div>
+                    </div>
+                `;
+                kinderFelder.appendChild(kindDiv);
+            }
+
+            setupValidationForNewFields();
+        });
+
+        function setupValidationForNewFields() {
+            const newInputs = document.querySelectorAll('#kinderFelder input[required]');
+            newInputs.forEach(input => {
+                input.addEventListener('blur', validateField);
+                input.addEventListener('input', validateField);
+            });
+        }
+
+        document.getElementById('registrationForm').addEventListener('submit', function (e) {
+            const submitBtn = this.querySelector('.submit-btn');
+            submitBtn.innerHTML = 'Wird verarbeitet...';
+            submitBtn.disabled = true;
+        });
+
+        const form = document.getElementById('registrationForm');
+        const initialInputs = form.querySelectorAll('input[required], textarea[required]');
+
+        initialInputs.forEach(input => {
+            input.addEventListener('blur', validateField);
+            input.addEventListener('input', validateField);
+        });
+
+        function validateField(e) {
+            const field = e.target;
+            const value = field.value.trim();
+
+            field.style.borderColor = '';
+
+            if (field.hasAttribute('required') && !value) {
+                field.style.borderColor = '#d32f2f';
+                return false;
+            }
+
+            if (field.type === 'email' && value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) {
+                    field.style.borderColor = '#d32f2f';
+                    return false;
+                }
+            }
+
+            if (field.type === 'number' && value) {
+                const num = parseInt(value);
+                if (num < 1 || num > 10) {
+                    field.style.borderColor = '#d32f2f';
+                    return false;
+                }
+            }
+
+            field.style.borderColor = '#4caf50';
+            return true;
+        }
+
+        form.addEventListener('submit', function (e) {
+            let isValid = true;
+
+            const allRequiredInputs = form.querySelectorAll('input[required], textarea[required]');
+            allRequiredInputs.forEach(input => {
+                if (!validateField({ target: input })) {
+                    isValid = false;
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                const submitBtn = this.querySelector('.submit-btn');
+                submitBtn.innerHTML = 'Jetzt anmelden';
+                submitBtn.disabled = false;
+
+                const firstError = form.querySelector('input[style*="border-color: rgb(211, 47, 47)"]');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+
+        if ('ontouchstart' in window) {
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function () {
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
