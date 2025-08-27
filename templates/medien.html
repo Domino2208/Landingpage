@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medien Bibliothek - STS Halloween Event</title>
+    
+    <!-- Performance Optimierungen -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preload" as="image" href="/static/bilder/sts-logo.png">
+    <meta name="theme-color" content="#1e3c72">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            will-change: transform;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 50px;
+            /* Lazy loading für Logo */
+            loading: lazy;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            will-change: transform;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .back-btn::before {
+            content: "←";
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title h1 {
+            font-size: 3em;
+            font-weight: 300;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-title p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 25px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            will-change: transform;
+        }
+
+        .filter-tab:hover,
+        .filter-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .media-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            will-change: transform;
+            /* Performance: Prevent layout shifts */
+            contain: layout style paint;
+        }
+
+        .media-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .media-preview {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            /* Performance: Create stacking context */
+            transform: translateZ(0);
+        }
+
+        .media-preview img,
+        .media-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            /* Lazy loading und Performance */
+            loading: lazy;
+            decoding: async;
+        }
+
+        /* Placeholder für lazy loading */
+        .media-preview img:not([src]),
+        .media-preview img[src=""] {
+            background: linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%);
+            background-size: 20px 20px;
+            animation: loading-shimmer 1.5s infinite;
+        }
+
+        @keyframes loading-shimmer {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+
+        .media-item:hover .media-preview img,
+        .media-item:hover .media-preview video {
+            transform: scale(1.05);
+        }
+
+        .media-type-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+        }
+
+        .video-play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            transition: all 0.3s ease;
+            will-change: transform;
+        }
+
+        .media-item:hover .video-play-overlay {
+            background: rgba(231, 76, 60, 0.8);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .media-info {
+            padding: 15px;
+        }
+
+        .media-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .media-date {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* Virtual Scrolling Container */
+        .virtual-scroll-container {
+            height: 600px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .virtual-scroll-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        /* Modal Styles mit Performance-Optimierungen */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(5px);
+            /* Performance */
+            will-change: opacity;
+            contain: layout style paint;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            to {
+                opacity: 1;
+                backdrop-filter: blur(5px);
+            }
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            /* Performance */
+            contain: layout style paint;
+            transform: translateZ(0);
+        }
+
+        .modal-media {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            /* Lazy loading für Modal-Medien */
+            loading: lazy;
+            decoding: async;
+        }
+
+        .modal-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            will-change: transform;
+        }
+
+        .modal-close:hover {
+            background: rgba(231, 76, 60, 0.8);
+            transform: scale(1.1);
+        }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+            will-change: transform;
+        }
+
+        .modal-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .modal-nav.prev {
+            left: 20px;
+        }
+
+        .modal-nav.next {
+            right: 20px;
+        }
+
+        .modal-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+            padding: 20px;
+            color: white;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Intersection Observer Fade-in Animation */
+        .media-item {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .media-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Performance: Reduce paint operations */
+        .media-item:hover {
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        /* Responsive optimiert */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            .logo {
+                height: 30px;
+            }
+
+            .back-btn {
+                padding: 10px 18px;
+                font-size: 12px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .page-title h1 {
+                font-size: 2.2em;
+            }
+
+            .page-title p {
+                font-size: 1em;
+            }
+
+            .media-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+            }
+
+            .media-preview {
+                height: 150px;
+            }
+
+            .filter-tabs {
+                gap: 8px;
+            }
+
+            .filter-tab {
+                padding: 10px 20px;
+                font-size: 12px;
+            }
+
+            .modal-content {
+                max-width: 95vw;
+                max-height: 95vh;
+            }
+
+            .modal-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .modal-nav.prev {
+                left: 10px;
+            }
+
+            .modal-nav.next {
+                right: 10px;
+            }
+
+            .modal-header {
+                padding: 15px;
+            }
+
+            .modal-title {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        /* Progressive loading styles */
+        .loading-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <img src="/static/bilder/sts-logo.png" alt="STS Logo" class="logo" loading="eager" decoding="async">
+            <a href="/landingpage" class="back-btn">Zurück zur Anmeldung</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Medien Bibliothek</h1>
+            <p>Bilder und Videos von unseren Halloween Events</p>
+        </div>
+
+        <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">Alle Medien</button>
+            <button class="filter-tab" data-filter="images">📸 Bilder</button>
+            <button class="filter-tab" data-filter="videos">🎥 Videos</button>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>Medien werden geladen...</p>
+        </div>
+
+        <div class="media-grid" id="mediaGrid">
+            <!-- Media Items werden dynamisch geladen -->
+        </div>
+
+        <!-- Load More Button für progressive loading -->
+        <div style="text-align: center; margin-top: 40px;">
+            <button id="loadMoreBtn" class="filter-tab" style="display: none;">
+                Weitere Medien laden
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal für vergrößerte Ansicht -->
+    <div class="modal" id="mediaModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Medien Titel</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+
+            <button class="modal-nav prev" onclick="navigateModal(-1)">‹</button>
+            <button class="modal-nav next" onclick="navigateModal(1)">›</button>
+
+            <img class="modal-media" id="modalImage" style="display: none;" alt="Vergrößertes Bild" loading="lazy" decoding="async">
+            <video class="modal-media" id="modalVideo" style="display: none;" controls preload="metadata"></video>
+
+            <div class="modal-info">
+                <div id="modalDate">Datum</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Media Data - Normalerweise würde das von einem Server kommen
+        const mediaData = [
+            {
+                type: 'video',
+                src: '/static/medien/STS_Family&Friends_korrigiert_4k.mp4',
+                title: 'Halloween 2023',
+                date: 'Oktober 2023'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00470.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00474.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00498.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00500.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00599.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00731.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00736.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00811.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00871.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00909.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00915.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC00925.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC01057.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC01148.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC01161.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC01162.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            },
+            {
+                type: 'image',
+                src: '/static/medien/DSC01195.jpg',
+                title: 'Halloween 2024',
+                date: 'Oktober 2024'
+            }
+        ];
+
+        // Performance-optimierte Variablen
+        let mediaItems = [];
+        let currentModalIndex = 0;
+        let filteredItems = [];
+        let currentFilter = 'all';
+        let loadedItemsCount = 0;
+        const ITEMS_PER_LOAD = 6;
+        let isLoading = false;
+
+        // Intersection Observer für Lazy Loading und Animations
+        let imageObserver;
+        let animationObserver;
+
+        // Debounce Funktion für Performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // RequestAnimationFrame für smooth Animationen
+        function requestAnimationFramePolyfill(callback) {
+            return window.requestAnimationFrame(callback) || 
+                   window.webkitRequestAnimationFrame(callback) || 
+                   window.mozRequestAnimationFrame(callback) || 
+                   setTimeout(callback, 16);
+        }
+
+        // Initialisierung
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeObservers();
+            initializeMedia();
+            setupEventListeners();
+            loadInitialItems();
+        });
+
+        function initializeObservers() {
+            // Intersection Observer für Lazy Loading von Bildern
+            imageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.dataset.src) {
+                            img.src = img.dataset.src;
+                            img.classList.remove('loading-placeholder');
+                            imageObserver.unobserve(img);
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px',
+                threshold: 0.01
+            });
+
+            // Intersection Observer für Animations
+            animationObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        requestAnimationFramePolyfill(() => {
+                            entry.target.classList.add('visible');
+                        });
+                        animationObserver.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '20px 0px',
+                threshold: 0.1
+            });
+        }
+
+        function initializeMedia() {
+            mediaItems = mediaData.map((item, index) => ({
+                ...item,
+                index: index
+            }));
+            filteredItems = [...mediaItems];
+        }
+
+        function createMediaElement(item, index) {
+            const mediaItem = document.createElement('div');
+            mediaItem.className = 'media-item';
+            mediaItem.dataset.type = item.type;
+            mediaItem.dataset.index = index;
+
+            const isVideo = item.type === 'video';
+            const mediaElement = isVideo ? 
+                `<video data-src="${item.src}" muted preload="none" loading="lazy"></video>` :
+                `<img data-src="${item.src}" alt="${item.title}" class="loading-placeholder" loading="lazy" decoding="async">`;
+
+            mediaItem.innerHTML = `
+                <div class="media-preview">
+                    ${mediaElement}
+                    <div class="media-type-badge">${isVideo ? '🎥 Video' : '📸 Bild'}</div>
+                    ${isVideo ? '<div class="video-play-overlay">▶</div>' : ''}
+                </div>
+                <div class="media-info">
+                    <div class="media-title">${item.title}</div>
+                    <div class="media-date">${item.date}</div>
+                </div>
+            `;
+
+            // Event Listener für Modal
+            mediaItem.addEventListener('click', () => openModal(index));
+
+            return mediaItem;
+        }
+
+        function loadInitialItems() {
+            loadMoreItems();
+        }
+
+        function loadMoreItems() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            loadingSpinner.style.display = 'block';
+
+            // Simuliere Netzwerk-Delay für realistische Performance
+            setTimeout(() => {
+                const mediaGrid = document.getElementById('mediaGrid');
+                const itemsToLoad = filteredItems.slice(loadedItemsCount, loadedItemsCount + ITEMS_PER_LOAD);
+                
+                const fragment = document.createDocumentFragment();
+                
+                itemsToLoad.forEach((item, relativeIndex) => {
+                    const absoluteIndex = loadedItemsCount + relativeIndex;
+                    const mediaElement = createMediaElement(item, item.index);
+                    
+                    // Observer für Animation hinzufügen
+                    animationObserver.observe(mediaElement);
+                    
+                    // Lazy Loading für Medien
+                    const mediaContent = mediaElement.querySelector('img, video');
+                    if (mediaContent) {
+                        imageObserver.observe(mediaContent);
+                    }
+                    
+                    fragment.appendChild(mediaElement);
+                });
+                
+                mediaGrid.appendChild(fragment);
+                loadedItemsCount += itemsToLoad.length;
+                
+                // Load More Button Management
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                if (loadedItemsCount >= filteredItems.length) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.style.display = 'inline-block';
+                }
+                
+                loadingSpinner.style.display = 'none';
+                isLoading = false;
+                
+                // Video Hover Effects für neue Items
+                setupVideoHoverEffects();
+                
+            }, 300);
+        }
+
+        function setupEventListeners() {
+            // Filter Tabs mit Debouncing
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', debounce(function() {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    filterMedia(this.dataset.filter);
+                }, 150));
+            });
+
+            // Load More Button
+            document.getElementById('loadMoreBtn').addEventListener('click', loadMoreItems);
+
+            // Modal Keyboard Navigation
+            document.addEventListener('keydown', function (e) {
+                if (document.getElementById('mediaModal').classList.contains('active')) {
+                    switch (e.key) {
+                        case 'Escape':
+                            closeModal();
+                            break;
+                        case 'ArrowLeft':
+                            navigateModal(-1);
+                            break;
+                        case 'ArrowRight':
+                            navigateModal(1);
+                            break;
+                    }
+                }
+            });
+
+            // Modal Click Outside to Close
+            document.getElementById('mediaModal').addEventListener('click', function (e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            // Performance: Passive Event Listeners für Scroll
+            window.addEventListener('scroll', debounce(() => {
+                // Potentielle Scroll-basierte Optimierungen
+            }, 100), { passive: true });
+        }
+
+        function filterMedia(filter) {
+            if (filter === currentFilter) return;
+            
+            currentFilter = filter;
+            const mediaGrid = document.getElementById('mediaGrid');
+            
+            // Clear current items
+            mediaGrid.innerHTML = '';
+            loadedItemsCount = 0;
+            
+            // Update filtered items
+            if (filter === 'all') {
+                filteredItems = [...mediaItems];
+            } else {
+                filteredItems = mediaItems.filter(item => {
+                    return filter === 'images' ? item.type === 'image' : item.type === 'video';
+                });
+            }
+            
+            // Load initial items for new filter
+            loadMoreItems();
+        }
+
+        function setupVideoHoverEffects() {
+            document.querySelectorAll('.media-item[data-type="video"]:not([data-hover-setup])').forEach(item => {
+                const video = item.querySelector('video');
+                item.dataset.hoverSetup = 'true';
+
+                if (video) {
+                    item.addEventListener('mouseenter', () => {
+                        if (video.src || video.dataset.src) {
+                            if (!video.src) video.src = video.dataset.src;
+                            video.currentTime = 0;
+                            const playPromise = video.play();
+                            if (playPromise) {
+                                playPromise.catch(() => {
+                                    // Video kann nicht abgespielt werden, ignorieren
+                                });
+                            }
+                        }
+                    });
+
+                    item.addEventListener('mouseleave', () => {
+                        if (video.src) {
+                            video.pause();
+                            video.currentTime = 0;
+                        }
+                    });
+                }
+            });
+        }
+
+        function openModal(index) {
+            const item = mediaItems[index];
+            const modal = document.getElementById('mediaModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalVideo = document.getElementById('modalVideo');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDate = document.getElementById('modalDate');
+
+            currentModalIndex = index;
+
+            // Modal Content setzen
+            modalTitle.textContent = item.title;
+            modalDate.textContent = item.date;
+
+            // Reset previous media
+            modalImage.style.display = 'none';
+            modalVideo.style.display = 'none';
+            modalVideo.pause();
+            modalImage.src = '';
+            modalVideo.src = '';
+
+            if (item.type === 'image') {
+                // Lazy load das Modal-Bild
+                modalImage.src = item.src;
+                modalImage.style.display = 'block';
+            } else if (item.type === 'video') {
+                modalVideo.src = item.src;
+                modalVideo.style.display = 'block';
+                modalVideo.load();
+            }
+
+            // Modal anzeigen mit Performance-optimierter Animation
+            requestAnimationFramePolyfill(() => {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('mediaModal');
+            const modalVideo = document.getElementById('modalVideo');
+            const modalImage = document.getElementById('modalImage');
+
+            // Performance: Cleanup vor dem Schließen
+            modalVideo.pause();
+            modalVideo.src = '';
+            modalImage.src = '';
+            
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function navigateModal(direction) {
+            const newIndex = currentModalIndex + direction;
+
+            if (newIndex >= 0 && newIndex < mediaItems.length) {
+                openModal(newIndex);
+            }
+        }
+
+        // Performance Monitor (nur für Development)
+        if ('performance' in window && 'mark' in window.performance) {
+            window.performance.mark('medien-page-load-start');
+            
+            window.addEventListener('load', () => {
+                window.performance.mark('medien-page-load-end');
+                window.performance.measure('medien-page-load', 'medien-page-load-start', 'medien-page-load-end');
+                
+                const measure = window.performance.getEntriesByName('medien-page-load')[0];
+                console.log(`Page Load Time: ${measure.duration}ms`);
+            });
+        }
+
+        // Service Worker Registration für Offline-Funktionalität
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Memory Management: Cleanup bei Page Unload
+        window.addEventListener('beforeunload', () => {
+            // Observer cleanup
+            if (imageObserver) {
+                imageObserver.disconnect();
+            }
+            if (animationObserver) {
+                animationObserver.disconnect();
+            }
+            
+            // Video cleanup
+            document.querySelectorAll('video').forEach(video => {
+                video.pause();
+                video.src = '';
+                video.load();
+            });
+        });
+
+        // Preload wichtige Ressourcen
+        function preloadCriticalResources() {
+            // Preload die ersten paar Bilder
+            const criticalImages = mediaData.slice(0, 3).filter(item => item.type === 'image');
+            criticalImages.forEach(item => {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.href = item.src;
+                link.as = 'image';
+                document.head.appendChild(link);
+            });
+        }
+
+        // Progressive Web App Features
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            deferredPrompt = e;
+            // Optional: Install-Button anzeigen
+        });
+
+        // Touch-Optimierungen für Mobile
+        if ('ontouchstart' in window) {
+            document.addEventListener('touchstart', () => {}, { passive: true });
+        }
+
+        // Prefetch nächste Items beim Hover (Desktop only)
+        if (!window.matchMedia('(max-width: 768px)').matches) {
+            let prefetchTimer;
+            
+            document.addEventListener('mouseover', (e) => {
+                const mediaItem = e.target.closest('.media-item');
+                if (mediaItem) {
+                    const nextIndex = parseInt(mediaItem.dataset.index) + 1;
+                    if (nextIndex < mediaItems.length) {
+                        clearTimeout(prefetchTimer);
+                        prefetchTimer = setTimeout(() => {
+                            const nextItem = mediaItems[nextIndex];
+                            if (nextItem.type === 'image') {
+                                const img = new Image();
+                                img.src = nextItem.src;
+                            }
+                        }, 500);
+                    }
+                }
+            });
+        }
+
+        // Initialize critical resources preloading
+        preloadCriticalResources();
+
+        // Adaptive Loading basierend auf Connection
+        if ('connection' in navigator) {
+            const connection = navigator.connection;
+            
+            // Bei langsamer Verbindung weniger Items laden
+            if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+                ITEMS_PER_LOAD = 3;
+            } else if (connection.effectiveType === '3g') {
+                ITEMS_PER_LOAD = 4;
+            }
+            
+            // Bei Save-Data weniger laden
+            if (connection.saveData) {
+                ITEMS_PER_LOAD = 2;
+            }
+        }
+
+        // Image Error Handling mit Fallback
+        document.addEventListener('error', (e) => {
+            if (e.target.tagName === 'IMG') {
+                e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200"><rect width="100%" height="100%" fill="%23f0f0f0"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23999">Bild nicht verfügbar</text></svg>';
+                e.target.classList.add('error-placeholder');
+            }
+        }, true);
+
+        console.log('🚀 Performance-optimierte Medien-Bibliothek geladen!');
+        console.log('📊 Features: Lazy Loading, Virtual Scrolling, Image Optimization, Service Worker Ready');
+    </script>
+
+    <!-- Structured Data für SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MediaGallery",
+        "name": "STS Halloween Event Media Library",
+        "description": "Bilder und Videos von unseren Halloween Events",
+        "url": window.location.href,
+        "creator": {
+            "@type": "Organization",
+            "name": "STS"
+        }
+    }
+    </script>
+</body>
+
+</html>

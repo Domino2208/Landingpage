@@ -186,6 +186,33 @@
             height: auto;
             border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease;
+        }
+
+        /* Lazy Loading Styles */
+        .lazy {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .lazy.loaded {
+            opacity: 1;
+        }
+
+        .lazy-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 15px;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         /* Foto Slider */
@@ -209,6 +236,7 @@
         .slider-track {
             display: flex;
             transition: transform 0.3s ease;
+            will-change: transform;
         }
 
         .slide {
@@ -221,6 +249,15 @@
             height: 400px;
             object-fit: cover;
             border-radius: 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .slide img.lazy {
+            opacity: 0;
+        }
+
+        .slide img.lazy.loaded {
+            opacity: 1;
         }
 
         .slider-nav {
@@ -272,6 +309,40 @@
 
         .dot.active {
             background: #3498db;
+        }
+
+        /* Mehr anzeigen Button */
+        .mehr-anzeigen-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .mehr-anzeigen-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .mehr-anzeigen-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+        }
+
+        .mehr-anzeigen-btn::after {
+            content: "📸";
+            font-size: 18px;
         }
 
         .form-container {
@@ -392,6 +463,7 @@
         input[type="email"],
         input[type="tel"],
         input[type="number"],
+        select,
         textarea {
             width: 100%;
             padding: 15px 20px;
@@ -407,11 +479,27 @@
         input[type="email"]:focus,
         input[type="tel"]:focus,
         input[type="number"]:focus,
+        select:focus,
         textarea:focus {
             outline: none;
             border-color: #3498db;
             background: white;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        select {
+            appearance: none;
+            color: #555;
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"%3E%3Cpath fill="%233498db" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/%3E%3C/svg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 15px;
+        }
+
+        select option {
+            padding: 10px;
+            background: white;
+            color: #555;
         }
 
         textarea {
@@ -655,6 +743,11 @@
             .slider-nav.next {
                 right: 10px;
             }
+
+            .mehr-anzeigen-btn {
+                padding: 12px 25px;
+                font-size: 14px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -702,6 +795,11 @@
             .slide img {
                 height: 250px;
             }
+
+            .mehr-anzeigen-btn {
+                padding: 10px 20px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -710,7 +808,7 @@
     <div class="main-wrapper">
         <header>
             <nav class="mid-nav">
-                <img src="/static/bilder/sts-logo.png" alt="STS Schumacher Finanzen & Consulting Logo">
+                <img src="/static/bilder/sts-logo.png" alt="STS Schumacher Finanzen & Consulting Logo" loading="lazy">
                 <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
                     <span></span>
                     <span></span>
@@ -743,21 +841,22 @@
                     <h2>Herzlich Willkommen!</h2>
                     <p>
                         <strong>Oktober 2025 │ Halloween Night – Wir laden herzlich ein!</strong><br><br>
-                        Am 31. Oktober 2025 verwandelt sich STS Schumacher Finanzen & Consulting in eine schaurig-schöne
-                        Location für eine unvergessliche Halloween-Nacht – und Sie sind mit Freunden oder Partner
-                        herzlich eingeladen, dabei zu sein.<br><br>
-                        Freuen Sie sich auf einen stimmungsvollen Abend in unserer Villa und im dekorierten
-                        Kanzleigarten Am Grafenbusch 3, 46047 Oberhausen:<br><br>
-                        Mit dabei sind mystische Live-Musik, ein Kostümwettbewerb, eine
-                        schaurige Cocktailbar und einige unheimliche Überraschungen. Für
-                        das leibliche Wohl sorgen herzhafte Snacks und stimmungsvolle Drinks, die
-                        perfekt zum Abend passen.<br><br>
-                        Beginn ist um 19 Uhr, und wir feiern bis tief in die Nacht.<br><br>
-                        <strong>Ihr Team von STS Schumacher Finanzen & Consulting</strong>
+                        Am 31. Oktober 2025 öffnet die alte Diva – unsere Villa am Grafenbusch – bereits zum vierten Mal
+                        ihre Türen für eine schaurig-schöne Halloween-Nacht. Es erwartet Sie ein Abend voller besonderer
+                        Atmosphäre, kreativer Kostüme, spannender Gespräche, einer schaurigen Cocktailbar und einigen
+                        unheimlichen Überraschungen. <br><br>
+
+                        Die Feier beginnt um <strong>17 Uhr</strong> in unserer Villa und im festlich dekorierten Kanzleigarten am
+                        <strong>Grafenbusch 3 in Oberhausen.</strong> <br><br>
+
+                        Da unsere Plätze begrenzt sind und bereits jetzt eine hohe Nachfrage herrscht, ist der Eintritt
+                        ausschließlich mit einer Einladungskarte möglich. <strong>Melden Sie sich hier an – <br>
+                        und sobald wir Ihre
+                        Teilnahme bestätigt haben, erhalten Sie Ihre persönliche Einladungskarte per Post.</strong>
                     </p>
                 </div>
                 <div class="event-image">
-                    <img src="/static/bilder/Einladung_Halloween_2024_Allgemein.png" alt="Halloween Event Einladung">
+                    <img src="/static/bilder/Einladung_Halloween_2024_Allgemein.png" alt="Halloween Event Einladung" class="lazy" loading="lazy">
                 </div>
             </div>
 
@@ -766,22 +865,35 @@
                 <div class="foto-slider">
                     <div class="slider-track" id="sliderTrack">
                         <div class="slide">
-                            <img src="https://placehold.co/900x400/e74c3c/ffffff?text=Event+Foto+1" alt="Event Foto 1">
+                            <img data-src="/static/medien/DSC00474.jpg" alt="Event Foto 1" class="lazy">
                         </div>
                         <div class="slide">
-                            <img src="https://placehold.co/900x400/3498db/ffffff?text=Event+Foto+2" alt="Event Foto 2">
+                            <img data-src="/static/medien/DSC00736.jpg" alt="Event Foto 2" class="lazy">
                         </div>
                         <div class="slide">
-                            <img src="https://placehold.co/900x400/27ae60/ffffff?text=Event+Foto+3" alt="Event Foto 3">
+                            <img data-src="/static/medien/DSC00925.jpg" alt="Event Foto 3" class="lazy">
+                        </div>
+                        <div class="slide">
+                            <img data-src="/static/medien/DSC00811.jpg" alt="Event Foto 4" class="lazy">
+                        </div>
+                        <div class="slide">
+                            <img data-src="/static/medien/DSC01162.jpg" alt="Event Foto 5" class="lazy">
                         </div>
                     </div>
-                    <button class="slider-nav prev" onclick="changeSlide(-1)" aria-label="Vorheriges Bild">❮</button>
-                    <button class="slider-nav next" onclick="changeSlide(1)" aria-label="Nächstes Bild">❯</button>
+                    <button class="slider-nav prev" onclick="changeSlide(-1)" aria-label="Vorheriges Bild">‹</button>
+                    <button class="slider-nav next" onclick="changeSlide(1)" aria-label="Nächstes Bild">›</button>
                 </div>
                 <div class="slider-dots">
                     <span class="dot active" onclick="currentSlide(1)"></span>
                     <span class="dot" onclick="currentSlide(2)"></span>
                     <span class="dot" onclick="currentSlide(3)"></span>
+                    <span class="dot" onclick="currentSlide(4)"></span>
+                    <span class="dot" onclick="currentSlide(5)"></span>
+                </div>
+                
+                <!-- Mehr anzeigen Button -->
+                <div class="mehr-anzeigen-container">
+                    <a href="/medien" class="mehr-anzeigen-btn">Mehr Bilder & Videos anzeigen</a>
                 </div>
             </div>
 
@@ -794,7 +906,8 @@
                     können.
                 </div>
 
-                <form method="POST" action="/register" id="registrationForm">
+                <form method="POST" action="/register-submit" id="registrationForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="vorname">Vorname <span class="required">*</span></label>
@@ -806,15 +919,30 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="email">E-Mail-Adresse <span class="required">*</span></label>
-                        <input type="email" id="email" name="email" required placeholder="ihre.email@beispiel.de">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-Mail-Adresse <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" required placeholder="ihre.email@beispiel.de">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefon">Telefonnummer <span class="required">*</span></label>
+                            <input type="tel" id="telefon" name="telefon" required placeholder="+49 123 456789">
+                        </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="telefon">Telefonnummer <span class="required">*</span></label>
-                            <input type="tel" id="telefon" name="telefon" required placeholder="+49 123 456789">
+                            <label for="berater">Welcher Berater hat sie eingeladen ? <span
+                                    class="required">*</span></label>
+                            <select name="berater" id="berater" required>
+                                <option value="" disabled selected>Bitte wählen Sie einen Berater</option>
+                                <option value="JM">Justine Madeja</option>
+                                <option value="MI">Matthias Igeler</option>
+                                <option value="FP">Francesco Piras</option>
+                                <option value="MG">Markus Goos</option>
+                                <option value="CV">Christian Voigt</option>
+                                <option value="DM">Dennis Matten</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="kinder">Anzahl Kinder <span class="required">*</span></label>
@@ -893,18 +1021,18 @@
             <div>
                 <h3>Kontakt</h3>
                 <p>
-                    Tel: <a href="tel:+4920882845900">+49 208 82 84 59 00</a>
-                    Fax: <br> +49 208 82 84 59 50 <br> 
-                    Mail: <a href="mailto:backoffice@sts-finanzen.de">info@stsfinanzen.de</a>
+                    Fax: +49 208 82 84 59 50 <br>
+                    <a href="tel:+4920882845900">Tel: +49 208 82 84 59 00</a>
+                    <a href="mailto:backoffice@sts-finanzen.de">Email: info@stsfinanzen.de</a>
+                    <a href="https://www.sts-finanzen.de" target="_blank">www.sts-finanzen.de</a>
                 </p>
             </div>
 
             <div>
                 <h3>Anschrift</h3>
-                <p>Schumacher Finanzen  <br> und Consulting GmbH</p> <br>
+                <p>Schumacher Finanzen <br> und Consulting GmbH</p> <br>
                 <p>Am Grafenbusch 3<br>
                     46047 Oberhausen<br><br>
-                    <a href="https://www.sts-finanzen.de" target="_blank">www.stsfinanzen.de</a>
                 </p>
             </div>
         </div>
@@ -915,13 +1043,73 @@
             <p>&copy; Copyright STS Schumacher Finanzen & Consulting GmbH 2025</p>
             <div class="right-footer">
                 <a href="https://www.sts-finanzen.de/impressum">Impressum</a>
-                <a href="https://www.sts-finanzen.de/datenschutz">Datenschutz</a>
+                <a href="datenschutz">Datenschutz</a>
                 <a href="https://www.sts-finanzen.de/cookie-einstellungen">Cookie-Einstellungen</a>
             </div>
         </div>
     </footer>
 
     <script>
+        // Lazy Loading Observer
+        let lazyImageObserver;
+
+        if ('IntersectionObserver' in window) {
+            lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        let lazyImage = entry.target;
+                        lazyImage.src = lazyImage.dataset.src || lazyImage.src;
+                        lazyImage.classList.remove('lazy');
+                        lazyImage.classList.add('loaded');
+                        lazyImageObserver.unobserve(lazyImage);
+                    }
+                });
+            }, {
+                rootMargin: '50px 0px',
+                threshold: 0.01
+            });
+
+            document.querySelectorAll('img.lazy').forEach(function(lazyImage) {
+                lazyImageObserver.observe(lazyImage);
+            });
+        } else {
+            // Fallback for browsers without IntersectionObserver
+            let lazyImages = document.querySelectorAll('img.lazy');
+            let active = false;
+
+            const lazyLoad = function() {
+                if (active === false) {
+                    active = true;
+
+                    setTimeout(function() {
+                        lazyImages.forEach(function(lazyImage) {
+                            if ((lazyImage.getBoundingClientRect().top <= window.innerHeight && lazyImage.getBoundingClientRect().bottom >= 0) && getComputedStyle(lazyImage).display !== 'none') {
+                                lazyImage.src = lazyImage.dataset.src || lazyImage.src;
+                                lazyImage.classList.remove('lazy');
+                                lazyImage.classList.add('loaded');
+
+                                lazyImages = Array.from(lazyImages).filter(function(image) {
+                                    return image !== lazyImage;
+                                });
+
+                                if (lazyImages.length === 0) {
+                                    document.removeEventListener('scroll', lazyLoad);
+                                    window.removeEventListener('resize', lazyLoad);
+                                    window.removeEventListener('orientationchange', lazyLoad);
+                                }
+                            }
+                        });
+
+                        active = false;
+                    }, 200);
+                }
+            };
+
+            document.addEventListener('scroll', lazyLoad);
+            window.addEventListener('resize', lazyLoad);
+            window.addEventListener('orientationchange', lazyLoad);
+        }
+
         // Mobile Menu Toggle
         function toggleMobileMenu() {
             const hamburger = document.querySelector('.hamburger');
@@ -950,88 +1138,175 @@
             }
         });
 
-        // Image Slider Functions
+        // Optimized Image Slider Functions
         let currentSlideIndex = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
+        let slides = [];
+        let totalSlides = 0;
+        let sliderTrack = null;
+        let autoSlideInterval = null;
+
+        function initializeSlider() {
+            sliderTrack = document.getElementById('sliderTrack');
+            slides = document.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            
+            // Load first slide image immediately
+            if (slides.length > 0) {
+                const firstSlideImg = slides[0].querySelector('img.lazy');
+                if (firstSlideImg && firstSlideImg.dataset.src) {
+                    firstSlideImg.src = firstSlideImg.dataset.src;
+                    firstSlideImg.classList.remove('lazy');
+                    firstSlideImg.classList.add('loaded');
+                }
+            }
+            
+            // Start auto-slide
+            startAutoSlide();
+        }
 
         function showSlide(index) {
-            const track = document.getElementById('sliderTrack');
+            if (!sliderTrack || totalSlides === 0) return;
+            
             const dots = document.querySelectorAll('.dot');
 
             if (index >= totalSlides) currentSlideIndex = 0;
             else if (index < 0) currentSlideIndex = totalSlides - 1;
             else currentSlideIndex = index;
 
-            track.style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+            // Use transform3d for better performance
+            sliderTrack.style.transform = `translate3d(-${currentSlideIndex * 100}%, 0, 0)`;
 
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === currentSlideIndex);
+            });
+
+            // Preload adjacent images
+            preloadAdjacentImages();
+        }
+
+        function preloadAdjacentImages() {
+            const preloadIndices = [
+                currentSlideIndex - 1 < 0 ? totalSlides - 1 : currentSlideIndex - 1,
+                currentSlideIndex + 1 >= totalSlides ? 0 : currentSlideIndex + 1
+            ];
+
+            preloadIndices.forEach(index => {
+                const slideImg = slides[index].querySelector('img.lazy');
+                if (slideImg && slideImg.dataset.src) {
+                    slideImg.src = slideImg.dataset.src;
+                    slideImg.classList.remove('lazy');
+                    slideImg.classList.add('loaded');
+                }
             });
         }
 
         function changeSlide(direction) {
             showSlide(currentSlideIndex + direction);
+            restartAutoSlide();
         }
 
         function currentSlide(index) {
             showSlide(index - 1);
+            restartAutoSlide();
         }
 
-        // Auto-slide every 5 seconds
-        setInterval(() => {
-            changeSlide(1);
-        }, 5000);
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => {
+                changeSlide(1);
+            }, 5000);
+        }
 
-        // Share Function
-        function shareEvent() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Halloween Event - STS Schumacher Finanzen & Consulting',
-                    text: 'Kommen Sie zu unserer Halloween-Nacht am 31. Oktober 2025!',
-                    url: window.location.href
-                }).catch(err => console.log('Error sharing:', err));
-            } else {
-                // Fallback für Desktop
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(window.location.href).then(() => {
-                        alert('Link wurde in die Zwischenablage kopiert!');
-                    }).catch(() => {
-                        fallbackCopy();
-                    });
+        function restartAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+
+        // Initialize slider when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeSlider);
+
+        // Share Function with error handling
+        async function shareEvent() {
+            const shareData = {
+                title: 'Halloween Event - STS Schumacher Finanzen & Consulting',
+                text: 'Kommen Sie zu unserer Halloween-Nacht am 31. Oktober 2025!',
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share && navigator.canShare(shareData)) {
+                    await navigator.share(shareData);
                 } else {
-                    fallbackCopy();
+                    await copyToClipboard(window.location.href);
+                    showShareFeedback('Link wurde in die Zwischenablage kopiert!');
+                }
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    await copyToClipboard(window.location.href);
+                    showShareFeedback('Link wurde in die Zwischenablage kopiert!');
                 }
             }
         }
 
-        function fallbackCopy() {
-            const textArea = document.createElement('textarea');
-            textArea.value = window.location.href;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('Link wurde in die Zwischenablage kopiert!');
+        async function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'absolute';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            }
         }
 
-        // Kinder-Felder dynamisch generieren
-        document.getElementById('kinder').addEventListener('input', function () {
+        function showShareFeedback(message) {
+            // Create and show temporary feedback message
+            const feedback = document.createElement('div');
+            feedback.textContent = message;
+            feedback.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #4caf50;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 4px;
+                z-index: 10000;
+                font-size: 14px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.remove();
+            }, 3000);
+        }
+
+        // Optimized Kinder-Felder generation
+        const kinderInput = document.getElementById('kinder');
+        const kinderContainer = document.getElementById('kinderContainer');
+        const kinderFelder = document.getElementById('kinderFelder');
+
+        kinderInput.addEventListener('input', function() {
             const anzahlKinder = parseInt(this.value) || 0;
-            const container = document.getElementById('kinderContainer');
-            const kinderFelder = document.getElementById('kinderFelder');
-
-            if (anzahlKinder > 0) {
-                container.style.display = 'block';
+            
+            if (anzahlKinder > 0 && anzahlKinder <= 10) {
+                kinderContainer.style.display = 'block';
+                generateKinderFields(anzahlKinder);
             } else {
-                container.style.display = 'none';
+                kinderContainer.style.display = 'none';
                 kinderFelder.innerHTML = '';
-                return;
             }
+        });
 
-            kinderFelder.innerHTML = '';
-
-            for (let i = 1; i <= anzahlKinder && i <= 10; i++) {
+        function generateKinderFields(count) {
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 1; i <= count; i++) {
                 const kindDiv = document.createElement('div');
                 kindDiv.className = 'kind-gruppe';
                 kindDiv.innerHTML = `
@@ -1047,11 +1322,13 @@
                         </div>
                     </div>
                 `;
-                kinderFelder.appendChild(kindDiv);
+                fragment.appendChild(kindDiv);
             }
-
+            
+            kinderFelder.innerHTML = '';
+            kinderFelder.appendChild(fragment);
             setupValidationForNewFields();
-        });
+        }
 
         function setupValidationForNewFields() {
             const newInputs = document.querySelectorAll('#kinderFelder input[required]');
@@ -1061,24 +1338,41 @@
             });
         }
 
-        document.getElementById('registrationForm').addEventListener('submit', function (e) {
-            const submitBtn = this.querySelector('.submit-btn');
-            submitBtn.innerHTML = 'Wird verarbeitet...';
-            submitBtn.disabled = true;
-        });
-
+        // Optimized form validation
         const form = document.getElementById('registrationForm');
-        const initialInputs = form.querySelectorAll('input[required], textarea[required]');
+        
+        // Debounced validation function
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
 
-        initialInputs.forEach(input => {
-            input.addEventListener('blur', validateField);
-            input.addEventListener('input', validateField);
+        const debouncedValidation = debounce(validateField, 300);
+
+        form.addEventListener('input', (e) => {
+            if (e.target.matches('input[required], textarea[required]')) {
+                debouncedValidation.call(null, e);
+            }
         });
+
+        form.addEventListener('blur', (e) => {
+            if (e.target.matches('input[required], textarea[required]')) {
+                validateField(e);
+            }
+        }, true);
 
         function validateField(e) {
             const field = e.target;
             const value = field.value.trim();
 
+            // Reset border
             field.style.borderColor = '';
 
             if (field.hasAttribute('required') && !value) {
@@ -1096,7 +1390,7 @@
 
             if (field.type === 'number' && value) {
                 const num = parseInt(value);
-                if (num < 1 || num > 10) {
+                if (num < 0 || num > 10) {
                     field.style.borderColor = '#d32f2f';
                     return false;
                 }
@@ -1106,7 +1400,9 @@
             return true;
         }
 
-        form.addEventListener('submit', function (e) {
+        // Optimized form submission
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('.submit-btn');
             let isValid = true;
 
             const allRequiredInputs = form.querySelectorAll('input[required], textarea[required]');
@@ -1118,7 +1414,6 @@
 
             if (!isValid) {
                 e.preventDefault();
-                const submitBtn = this.querySelector('.submit-btn');
                 submitBtn.innerHTML = 'Jetzt anmelden';
                 submitBtn.disabled = false;
 
@@ -1127,16 +1422,37 @@
                     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     firstError.focus();
                 }
+                return;
             }
+
+            submitBtn.innerHTML = 'Wird verarbeitet...';
+            submitBtn.disabled = true;
         });
 
+        // Smooth scroll for mobile touch devices
         if ('ontouchstart' in window) {
             const inputs = document.querySelectorAll('input, textarea');
             inputs.forEach(input => {
-                input.addEventListener('focus', function () {
+                input.addEventListener('focus', function() {
                     setTimeout(() => {
-                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        this.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center',
+                            inline: 'nearest'
+                        });
                     }, 300);
+                });
+            });
+        }
+
+        // Performance monitoring
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => {
+                // Non-critical performance optimizations
+                document.querySelectorAll('a[href^="http"]').forEach(link => {
+                    if (link.hostname !== window.location.hostname) {
+                        link.rel = 'noopener noreferrer';
+                    }
                 });
             });
         }

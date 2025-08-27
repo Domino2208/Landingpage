@@ -660,7 +660,8 @@
             <a href="https://www.sts-finanzen.de/immobilien">IMMOBILIEN</a>
             <a href="https://www.sts-finanzen.de/geldanlage">GELDANLAGE</a>
             <a href="https://www.sts-finanzen.de/finanzierung">FINANZIERUNG</a>
-            <a href="{{ url_for('admin_logout') }}" style="border-top: 2px solid rgba(255,255,255,0.2); margin-top: 10px; color: #ff6b6b;">🚪 Abmelden</a>
+            <a href="{{ url_for('admin_logout') }}"
+                style="border-top: 2px solid rgba(255,255,255,0.2); margin-top: 10px; color: #ff6b6b;">🚪 Abmelden</a>
         </div>
     </header>
 
@@ -676,7 +677,7 @@
             </div>
             <div class="stat-card">
                 <div class="stat-number">
-                    {% set total_kinder = gaeste|map(attribute='kinder')|map('int')|sum %} 
+                    {% set total_kinder = gaeste|map(attribute='kinder')|map('int')|sum %}
                     {{ total_kinder }}
                 </div>
                 <div class="stat-label">Angemeldete Kinder</div>
@@ -697,11 +698,8 @@
         <div class="controls-section">
             <div class="controls-header">
                 <div class="search-container">
-                    <input type="text" 
-                           id="searchInput" 
-                           class="search-input" 
-                           placeholder="Nach Namen, E-Mail oder Telefonnummer suchen..."
-                           onkeyup="searchTable()">
+                    <input type="text" id="searchInput" class="search-input"
+                        placeholder="Nach Namen, E-Mail oder Telefonnummer suchen..." onkeyup="searchTable()">
                     <span class="search-icon">🔍</span>
                 </div>
                 <button class="export-btn" onclick="exportToExcel()">
@@ -731,10 +729,12 @@
                             <th>Hausnr</th>
                             <th>PLZ</th>
                             <th>Ort</th>
-                            <th>Zustimmung</th>
+                            <th>Eingeladen von</th>
+                            <th>Ticket bestätigt</th>
                             <th>Status</th>
                             <th>Registriert</th>
                             <th>Eingecheckt</th>
+                            <th>Aktion</th>
                             <th>Aktion</th>
                         </tr>
                     </thead>
@@ -754,31 +754,34 @@
                                 {% endif %}
                             </td>
                             <td class="kinder-info">
-                                <div class="kinder-anzahl">{{ gast.kinder }} Kind{{ 'er' if gast.kinder|int > 1 else '' }}</div>
-                                
+                                <div class="kinder-anzahl">{{ gast.kinder }} Kind{{ 'er' if gast.kinder|int > 1 else ''
+                                    }}</div>
+
                                 {% if gast.get_kinder_liste() %}
-                                    <button class="kinder-toggle" onclick="toggleKinder({{ gast.id }})">
-                                        Details anzeigen
-                                    </button>
-                                    <div id="kinder-{{ gast.id }}" class="kinder-details">
-                                        {% for kind in gast.get_kinder_liste() %}
-                                            <div class="kind-item">
-                                                👶 {{ kind.vorname }} {{ kind.nachname }}
-                                            </div>
-                                        {% endfor %}
+                                <button class="kinder-toggle" onclick="toggleKinder({{ gast.id }})">
+                                    Details anzeigen
+                                </button>
+                                <div id="kinder-{{ gast.id }}" class="kinder-details">
+                                    {% for kind in gast.get_kinder_liste() %}
+                                    <div class="kind-item">
+                                        👶 {{ kind.vorname }} {{ kind.nachname }}
                                     </div>
+                                    {% endfor %}
+                                </div>
                                 {% else %}
-                                    <div class="kinder-liste" style="color: #999; font-style: italic;">
-                                        Keine Details
-                                    </div>
+                                <div class="kinder-liste" style="color: #999; font-style: italic;">
+                                    Keine Details
+                                </div>
                                 {% endif %}
                             </td>
                             <td>{{ gast.adresse }}</td>
                             <td>{{ gast.hausnr }}</td>
                             <td>{{ gast.plz }}</td>
                             <td>{{ gast.ort }}</td>
-                            <td>
-                                {% if gast.zustimmung %}
+                            <td>{{ gast.berater }}</td>
+                            <td id="ticket-status-{{ gast.id }}">
+
+                                {% if gast.ticket_bestaetigt %}
                                 <span style="color: #4caf50;">Ja</span>
                                 {% else %}
                                 <span style="color: #d32f2f;">Nein</span>
@@ -791,7 +794,8 @@
                                 </span>
                             </td>
                             <td class="timestamp">
-                                {{ gast.get_formatted_registriert_am()|berlin_time if gast.get_formatted_registriert_am() else gast.registriert_am|berlin_time }}
+                                {{ gast.get_formatted_registriert_am()|berlin_time if
+                                gast.get_formatted_registriert_am() else gast.registriert_am|berlin_time }}
                             </td>
                             <td class="timestamp">
                                 {% if gast.get_formatted_anwesenheit_geaendert_am() %}
@@ -802,7 +806,14 @@
                             </td>
                             <td>
                                 <button class="toggle-btn" onclick="toggleAnwesenheit({{ gast.id }})">
-                                    {% if gast.anwesend %}Als abwesend markieren{% else %}Als anwesend markieren{% endif %}
+                                    {% if gast.anwesend %}Als abwesend markieren{% else %}Als anwesend markieren{% endif
+                                    %}
+                                </button>
+                            </td>
+                            <td>
+                                <button class="toggle-btn" onclick="bestaetigeTicket({{ gast.id }})" {% if
+                                    gast.ticket_bestaetigt %}disabled{% endif %}>
+                                    Bestätigungs-Mail senden
                                 </button>
                             </td>
                         </tr>
@@ -825,11 +836,55 @@
     </button>
 
     <script>
+        window.csrf_token = "{{ csrf_token() }}";
+
+        function bestaetigeTicket(gastId) {
+            if (!confirm('Bestätigungs-Mail wirklich senden?')) return;
+            fetch(`/api/bestatige_ticket/${gastId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': window.csrf_token // falls du CSRF brauchst
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`ticket-status-${gastId}`).innerText = 'Ja';
+                        document.querySelector(`#gast-${gastId} button`).disabled = true;
+                        alert('Bestätigungs-Mail wurde gesendet!');
+                    } else {
+                        alert('Fehler: ' + data.message);
+                    }
+                })
+                .catch(() => alert('Netzwerkfehler!'));
+        }
+
+        async function toggleAnwesenheit(gastId) {
+            try {
+                const response = await fetch(`/api/toggle_anwesenheit/${gastId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-Token': window.csrf_token
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Fehler beim Ändern des Status');
+                }
+            } catch (error) {
+                alert('Ein Fehler ist aufgetreten');
+                console.error('Error:', error);
+            }
+        }
+
         // Mobile Menu Toggle
         function toggleMobileMenu() {
             const hamburger = document.querySelector('.hamburger');
             const mobileMenu = document.querySelector('.mobile-menu');
-            
+
             hamburger.classList.toggle('active');
             mobileMenu.classList.toggle('active');
         }
@@ -846,33 +901,17 @@
         document.addEventListener('click', (e) => {
             const hamburger = document.querySelector('.hamburger');
             const mobileMenu = document.querySelector('.mobile-menu');
-            
+
             if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
                 hamburger.classList.remove('active');
                 mobileMenu.classList.remove('active');
             }
         });
 
-        async function toggleAnwesenheit(gastId) {
-            try {
-                const response = await fetch(`/api/toggle_anwesenheit/${gastId}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Fehler beim Ändern des Status');
-                }
-            } catch (error) {
-                alert('Ein Fehler ist aufgetreten');
-                console.error('Error:', error);
-            }
-        }
-
         function toggleKinder(gastId) {
             const kinderDetails = document.getElementById(`kinder-${gastId}`);
             const toggleBtn = kinderDetails.previousElementSibling;
-            
+
             if (kinderDetails.classList.contains('show')) {
                 kinderDetails.classList.remove('show');
                 toggleBtn.textContent = 'Details anzeigen';
@@ -899,7 +938,7 @@
 
                 // Durchsuche relevante Spalten: Vorname, Nachname, E-Mail, Telefon
                 const searchCells = [cells[0], cells[1], cells[2], cells[3]]; // Vorname, Nachname, E-Mail, Telefon
-                
+
                 for (let j = 0; j < searchCells.length; j++) {
                     if (searchCells[j]) {
                         const cellText = searchCells[j].textContent || searchCells[j].innerText;
@@ -930,6 +969,49 @@
             }
         }
 
+
+        function bestaetigeTicket(gastId) {
+            if (!confirm('Bestätigungs-Mail wirklich senden?')) return;
+            fetch(`/api/bestatige_ticket/${gastId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': window.csrf_token
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`ticket-status-${gastId}`).innerText = 'Ja';
+                        document.querySelector(`#gast-${gastId} button`).disabled = true;
+                        alert('Bestätigungs-Mail wurde gesendet!');
+                    } else {
+                        alert('Fehler: ' + data.message);
+                    }
+                })
+                .catch(() => alert('Netzwerkfehler!'));
+        }
+
+        async function toggleAnwesenheit(gastId) {
+            try {
+                const response = await fetch(`/api/toggle_anwesenheit/${gastId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-Token': window.csrf_token
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Fehler beim Ändern des Status');
+                }
+            } catch (error) {
+                alert('Ein Fehler ist aufgetreten');
+                console.error('Error:', error);
+            }
+        }
+
         // Excel Export Funktion
         async function exportToExcel() {
             try {
@@ -939,19 +1021,19 @@
                 exportBtn.disabled = true;
 
                 const response = await fetch('/admin/export-excel');
-                
+
                 if (response.ok) {
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    
+
                     // Dateiname mit aktuellem Datum
                     const now = new Date();
                     const dateStr = now.toISOString().split('T')[0];
                     a.download = `gaesteliste_${dateStr}.xlsx`;
-                    
+
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
@@ -965,7 +1047,7 @@
             } catch (error) {
                 console.error('Export Fehler:', error);
                 alert('Ein Fehler ist beim Export aufgetreten');
-                
+
                 const exportBtn = document.querySelector('.export-btn');
                 exportBtn.innerHTML = '📊 Excel Export';
                 exportBtn.disabled = false;

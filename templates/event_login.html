@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zugang erforderlich - Halloween Event</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(0deg, rgba(162, 111, 82, 1) 7%, rgba(42, 75, 99, 1) 61%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        header {
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-image: url('/static/bilder/kontakt_hintergrund.jpg');
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .mid-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .mid-nav img {
+            height: 60px;
+            width: auto;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .low-nav {
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .low-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .low-nav a:hover {
+            background: #34495e;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100vh;
+            background: rgba(44, 62, 80, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            padding-top: 100px;
+            transition: left 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            left: 0;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            padding: 15px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            background: rgba(52, 73, 94, 0.7);
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            animation: slideIn 0.6s ease-out;
+            margin-top: 140px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .event-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+            }
+        }
+
+        .event-icon::after {
+            content: "🎃";
+            font-size: 45px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 2.4em;
+            font-weight: 300;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .event-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .event-info h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-info h3::before {
+            content: "🎉";
+        }
+
+        .event-info p {
+            color: #856404;
+            font-size: 0.95em;
+            line-height: 1.4;
+            margin: 5px 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            font-family: inherit;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(52, 152, 219, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .login-btn::before {
+            content: "🔓";
+            margin-right: 8px;
+        }
+
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
+        }
+
+        .flash-error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border-left: 4px solid #dc3545;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1);
+        }
+
+        .flash-info {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            color: #0c5460;
+            padding: 15px 20px;
+            border-radius: 10px;
+            border-left: 4px solid #17a2b8;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.1);
+        }
+
+        .home-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .home-link:hover {
+            text-decoration: underline;
+            transform: translateX(-3px);
+        }
+
+        .home-link::before {
+            content: "←";
+            font-size: 1.1em;
+        }
+
+        .security-info {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            font-size: 0.9em;
+            color: #666;
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .security-info strong {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .security-info strong::before {
+            content: "🔐";
+        }
+
+        /* Halloween Theme Decorations */
+        .halloween-decoration {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .halloween-decoration:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .halloween-decoration:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+
+        .halloween-decoration:nth-child(3) {
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .low-nav {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .mid-nav {
+                position: relative;
+                padding: 15px 20px;
+            }
+
+            .mid-nav img {
+                height: 35px;
+            }
+
+            .login-container {
+                padding: 35px 25px;
+                margin: 10px;
+                margin-top: 130px;
+                max-width: 400px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .event-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            .event-icon::after {
+                font-size: 35px;
+            }
+
+            .event-info {
+                padding: 15px;
+            }
+
+            input[type="password"] {
+                padding: 15px 18px;
+            }
+
+            .login-btn {
+                padding: 15px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+                margin-top: 120px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .event-info {
+                padding: 12px;
+            }
+
+            .event-info h3 {
+                font-size: 1.1em;
+            }
+
+            .event-info p {
+                font-size: 0.9em;
+            }
+
+            input[type="password"] {
+                padding: 12px 15px;
+                font-size: 16px;
+            }
+
+            .login-btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+
+        /* Shake animation for wrong password */
+        @keyframes shake {
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Halloween Decorations -->
+    <div class="halloween-decoration">🎃</div>
+    <div class="halloween-decoration">👻</div>
+    <div class="halloween-decoration">🕷️</div>
+
+    <header>
+        <nav class="mid-nav">
+            <img src="/static/bilder/sts-logo.png" alt="STS Schumacher Finanzen & Consulting Logo">
+            <div class="hamburger" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+        <nav class="low-nav">
+            <a href="https://www.sts-finanzen.de">HOME</a>
+            <a href="https://www.sts-finanzen.de/ueber-uns">ÜBER UNS</a>
+            <a href="https://www.sts-finanzen.de/events">EVENTS</a>
+            <a href="https://www.sts-finanzen.de/versicherung">VERSICHERUNG</a>
+            <a href="https://www.sts-finanzen.de/immobilien">IMMOBILIEN</a>
+            <a href="https://www.sts-finanzen.de/geldanlage">GELDANLAGE</a>
+            <a href="https://www.sts-finanzen.de/finanzierung">FINANZIERUNG</a>
+        </nav>
+        <div class="mobile-menu">
+            <a href="https://www.sts-finanzen.de">HOME</a>
+            <a href="https://www.sts-finanzen.de/ueber-uns">ÜBER UNS</a>
+            <a href="https://www.sts-finanzen.de/events">EVENTS</a>
+            <a href="https://www.sts-finanzen.de/versicherung">VERSICHERUNG</a>
+            <a href="https://www.sts-finanzen.de/immobilien">IMMOBILIEN</a>
+            <a href="https://www.sts-finanzen.de/geldanlage">GELDANLAGE</a>
+            <a href="https://www.sts-finanzen.de/finanzierung">FINANZIERUNG</a>
+        </div>
+    </header>
+
+    <div class="login-container">
+        <div class="event-icon"></div>
+
+        <h1>Halloween Event 2025</h1>
+        <p class="subtitle">Zugang nur für eingeladene Gäste<br>Bitte geben Sie das Event-Passwort ein</p>
+
+        <div class="event-info">
+            <h3>Halloween Night</h3>
+            <p><strong>📅 Datum:</strong> 31. Oktober 2025</p>
+            <p><strong>🕰️ Zeit:</strong> ab 19:00 Uhr</p>
+            <p><strong>📍 Ort:</strong> Am Grafenbusch 3, Oberhausen</p>
+        </div>
+
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <form method="POST" action="{{ url_for('event_login') }}" id="eventLoginForm">
+            <div class="form-group">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="password">Event-Passwort</label>
+                <input type="password" id="password" name="password" required placeholder="Geben Sie das Event-Passwort ein" autocomplete="off">
+            </div>
+
+            <button type="submit" class="login-btn">
+                Zugang gewähren
+            </button>
+        </form>
+
+        <div class="security-info">
+            <strong>Sicherheitshinweis:</strong>
+            Diese Seite ist passwortgeschützt. Nur eingeladene Gäste mit dem korrekten Passwort haben Zugang zum Anmeldeformular. 
+            Falls Sie eine Einladung erhalten haben, finden Sie das Passwort in Ihrer Einladung.
+        </div>
+
+        <div style="margin-top: 25px;">
+            <a href="https://www.sts-finanzen.de" class="home-link">Zur Hauptwebsite</a>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.hamburger').classList.remove('active');
+                document.querySelector('.mobile-menu').classList.remove('active');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const hamburger = document.querySelector('.hamburger');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Enhanced form handling
+        document.addEventListener('DOMContentLoaded', function () {
+            const passwordInput = document.getElementById('password');
+            const form = document.getElementById('eventLoginForm');
+            const loginBtn = document.querySelector('.login-btn');
+
+            // Focus on password input
+            passwordInput.focus();
+
+            // Form submission handling
+            form.addEventListener('submit', function (e) {
+                const password = passwordInput.value.trim();
+
+                if (!password) {
+                    e.preventDefault();
+                    passwordInput.classList.add('shake');
+                    setTimeout(() => {
+                        passwordInput.classList.remove('shake');
+                        passwordInput.focus();
+                    }, 500);
+                    return;
+                }
+
+                // Show loading state
+                loginBtn.innerHTML = 'Wird überprüft...';
+                loginBtn.disabled = true;
+            });
+
+            // Remove shake class after animation
+            passwordInput.addEventListener('animationend', function () {
+                this.classList.remove('shake');
+            });
+
+            // Show error animation if there are flash messages
+            const flashError = document.querySelector('.flash-error');
+            if (flashError) {
+                passwordInput.classList.add('shake');
+                passwordInput.focus();
+                setTimeout(() => {
+                    passwordInput.classList.remove('shake');
+                }, 500);
+            }
+        });
+
+        // Security: Prevent right-click context menu
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+
+        // Add floating Halloween decorations
+        function createFloatingDecoration() {
+            const decorations = ['🎃', '👻', '🕷️', '🦇', '🕸️'];
+            const decoration = document.createElement('div');
+            decoration.style.position = 'fixed';
+            decoration.style.fontSize = '20px';
+            decoration.style.opacity = '0.1';
+            decoration.style.zIndex = '1';
+            decoration.style.pointerEvents = 'none';
+            decoration.innerHTML = decorations[Math.floor(Math.random() * decorations.length)];
+            
+            decoration.style.left = Math.random() * 100 + '%';
+            decoration.style.top = Math.random() * 100 + '%';
+            
+            document.body.appendChild(decoration);
+            
+            // Animate
+            decoration.animate([
+                { transform: 'translateY(0px)', opacity: 0.1 },
+                { transform: 'translateY(-20px)', opacity: 0.05 },
+                { transform: 'translateY(0px)', opacity: 0.1 }
+            ], {
+                duration: 3000 + Math.random() * 2000,
+                iterations: Infinity,
+                easing: 'ease-in-out'
+            });
+            
+            // Remove after some time to prevent memory leaks
+            setTimeout(() => {
+                decoration.remove();
+            }, 30000);
+        }
+
+        // Create decorations periodically
+        setInterval(createFloatingDecoration, 5000);
+    </script>
+</body>
+
+</html>
