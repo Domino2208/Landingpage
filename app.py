@@ -404,7 +404,7 @@ def sende_registrierung_email(gast):
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                 <h2 style="color: #2c3e50;">Hallo {vorname}!</h2>
-                <p>vielen Dank für Ihre Anmeldung zu unserer Halloween-Veranstaltung!</p>
+                <p>vielen Dank für Ihre Anmeldung zur Halloween im House of Horror!</p>
                 
                 <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
                     <h3 style="color: #2c3e50; margin-top: 0;">Ihre Anmeldedaten:</h3>
@@ -430,7 +430,7 @@ def sende_registrierung_email(gast):
                 <div style="margin: 30px 0; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
                     <p><strong>⏰ Bitte haben Sie etwas Geduld:</strong><br>
                     Wir bearbeiten alle Anmeldungen manuell, um Ihnen den bestmöglichen Service zu bieten. 
-                    Sie hören spätestens innerhalb von 24 Stunden von uns.</p>
+                    Sie hören innerhalb von 24 Stunden von uns.</p>
                 </div>
                 
                 <hr style="margin: 30px 0; border: 0; height: 1px; background: #e1e5e9;">
@@ -438,7 +438,7 @@ def sende_registrierung_email(gast):
                 <p>Falls Sie Fragen haben, können Sie gerne antworten oder uns direkt kontaktieren.</p>
                 
                 <p style="margin-top: 30px;">
-                    <strong>Ihr Team von STS Schumacher Finanzen & Consulting</strong><br>
+                    <strong>Ihr Team von Schumacher Finanzen & Consulting</strong><br>
                     <small style="color: #666;">
                         📧 info@sts-finanzen.de<br>
                         📞 +49 208 82 84 59 00<br>
@@ -471,7 +471,7 @@ def sende_ticket_email(gast, qr_code_base64):
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                 <h2 style="color: #2c3e50;">🎉 Großartige Neuigkeiten, {sanitize_input(gast.vorname)}!</h2>
-                <p>Ihre Anmeldung wurde <strong>bestätigt</strong> und Sie sind offiziell für unsere Halloween-Veranstaltung angemeldet!</p>
+                <p>Ihre Anmeldung wurde <strong>bestätigt</strong> und Sie sind offiziell zur unseren Halloween im House of Horror angemeldet!</p>
                 
                 <div style="background: #d4edda; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745; margin: 20px 0; text-align: center;">
                     <h3 style="color: #155724; margin-top: 0;">✅ Teilnahme bestätigt!</h3>
@@ -518,7 +518,7 @@ def sende_ticket_email(gast, qr_code_base64):
                 <p><strong>🎃 Wir freuen uns auf eine schaurig-schöne Halloween-Nacht mit Ihnen!</strong></p>
                 
                 <p style="margin-top: 30px;">
-                    <strong>Ihr Team von STS Schumacher Finanzen & Consulting</strong><br>
+                    <strong>Ihr Team von Schumacher Finanzen & Consulting</strong><br>
                     <small style="color: #666;">
                         📧 info@sts-finanzen.de<br>
                         📞 +49 208 82 84 59 00<br>
