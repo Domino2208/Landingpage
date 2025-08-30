@@ -662,7 +662,7 @@ def checkin(unique_code):
     return render_template('checkin.html', gast=gast, status=status, timestamp=timestamp)
 
 @app.route('/admin/login', methods=['GET', 'POST'])
-@limiter.limit("15 per hour")
+@limiter.limit("50 per hour")
 def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')

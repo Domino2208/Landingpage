@@ -417,7 +417,7 @@
         </div>
 
         <form method="POST" action="{{ url_for('admin_login') }}">
-            <input type="hidden" name="csrf_token" value="...">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label for="username">Benutzername</label>
                 <input type="text" id="username" name="username" required placeholder="Admin Benutzername">
