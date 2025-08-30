@@ -82,7 +82,9 @@ def validate_password_complexity(password):
     return True
 
 if not validate_password_complexity(ADMIN_PASSWORD):
-    app.logger.warning("ADMIN_PASSWORD sollte komplexer sein")
+    raise ValueError("ADMIN_PASSWORD erfüllt die Komplexitätsanforderungen nicht!")
+if not validate_password_complexity(EVENT_PASSWORD):
+    raise ValueError("EVENT_PASSWORD erfüllt die Komplexitätsanforderungen nicht!")
 
 ADMIN_PASSWORD_HASH = generate_password_hash(ADMIN_PASSWORD, method='pbkdf2:sha256:260000')
 
@@ -493,14 +495,6 @@ def sende_ticket_email(gast, qr_code_base64):
                     <h3 style="color: #1976d2; margin-top: 0;">🎫 Ihr QR-Code-Ticket</h3>
                     <p>Bitte verwenden Sie den untenstehenden QR-Code für Ihren Check-in:</p>
                     <img src="data:image/png;base64,{qr_code_base64}" alt="QR Code" style="max-width: 300px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-                    
-                    <div style="margin-top: 15px; padding: 10px; background: white; border-radius: 4px;">
-                        <p style="margin: 5px 0;"><strong>Alternative Check-in URL:</strong></p>
-                        <a href="{request.url_root}checkin/{gast.unique_code}" 
-                           style="color: #3498db; word-break: break-all; font-size: 14px;">
-                           {request.url_root}checkin/{gast.unique_code}
-                        </a>
-                    </div>
                 </div>
                 
                 <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border-left: 4px solid #ffc107; margin: 20px 0;">

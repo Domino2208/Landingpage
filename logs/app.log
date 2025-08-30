@@ -1119,3 +1119,5 @@ jinja2.exceptions.TemplateNotFound: 404.html
 2025-08-29 15:19:12,194 INFO: Registrierungs-E-Mail gesendet an d.partyka@sts-finanzen.de [in C:\Users\DominikPartyka\OneDrive - Schumacher Finanzen & Consulting GmbH\Desktop\Landingpage-Halloween - Kopie\app.py:453]
 2025-08-29 15:23:23,068 INFO: App startup [in C:\Users\DominikPartyka\OneDrive - Schumacher Finanzen & Consulting GmbH\Desktop\Landingpage-Halloween - Kopie\app.py:163]
 2025-08-29 15:26:25,285 INFO: App startup [in C:\Users\DominikPartyka\OneDrive - Schumacher Finanzen & Consulting GmbH\Desktop\Landingpage-Halloween - Kopie\app.py:163]
+2025-08-30 13:55:17,784 INFO: App startup [in C:\Users\DominikPartyka\OneDrive - Schumacher Finanzen & Consulting GmbH\Desktop\Landingpage-Halloween - Kopie\app.py:163]
+2025-08-30 13:56:10,672 INFO: Registrierungs-E-Mail gesendet an d.partyka@sts-finanzen.de [in C:\Users\DominikPartyka\OneDrive - Schumacher Finanzen & Consulting GmbH\Desktop\Landingpage-Halloween - Kopie\app.py:453]
